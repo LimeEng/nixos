@@ -19,11 +19,12 @@
   #     xxx
   # '';
 
-  # set cursor size and dpi for 4k monitor
-  xresources.properties = {
-    "Xcursor.size" = 16;
-    "Xft.dpi" = 172;
-  };
+  home.file.".zprofile".text = ''
+  if [ "$(tty)" = "/dev/tty1" ]; then
+    exec Hyprland
+  fi
+'';
+
 
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
