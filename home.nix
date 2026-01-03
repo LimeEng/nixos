@@ -28,15 +28,21 @@
 
   # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
+    # Desktop applications
+    firefox
+    vscode
+
+    # CLI utilities
     neofetch
     curl
-    cowsay
     which
     tree
     sl
     ffmpeg
     dysk
     nix-output-monitor
+    pipes-rs
+    cbonsai
   ];
 
   programs.git = {

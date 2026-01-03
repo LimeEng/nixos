@@ -65,17 +65,12 @@
     isNormalUser = true;
     description = "Emil";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-      vscode
-    ];
+    packages = with pkgs; [];
   };
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
   services.displayManager.autoLogin.user = "emil";
-
-  # Install firefox.
-  programs.firefox.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -86,7 +81,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     nano
+     vim
      git
   ];
 
