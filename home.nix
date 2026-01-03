@@ -73,6 +73,34 @@
     syntaxHighlighting.enable = true;
   };
 
+  programs.kitty = {
+    enable = true;
+    settings = {
+      background_opacity = "1.0";
+      dynamic_background_opacity = false;
+    };
+  };
+
+  # Hyprland config for better VM compatibility
+  home.file.".config/hypr/hyprland.conf".text = ''
+    # Set environment variables for better VM compatibility
+    env = WLR_NO_HARDWARE_CURSORS,1
+    env = WLR_RENDERER_ALLOW_SOFTWARE,1
+    
+    # Disable animations
+    animations {
+        enabled = no
+    }
+    
+    # Disable blur and shadows
+    decoration {
+        blur {
+            enabled = no
+        }
+        drop_shadow = no
+    }
+  '';
+
   # This value determines the home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new home Manager release introduces backwards
