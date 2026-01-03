@@ -1,0 +1,64 @@
+name: Build NixOS Installation ISOs
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_name:
+        description: 'Server name from servers.nix'
+        required: true
+        type: string
+      ssh_keys:
+        description: 'SSH public keys (one per line)'
+        required: true
+        type: string
+      hostname:
+        description: 'Server hostname'
+        required: true
+        type: string
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create temporary servers.nix
+      run: |
+        cat > servers.nix << EOF
+        {
+          ${{ github.event.inputs.server_name }} = (import ./flake.nix).lib.mkServer {
+            hostname = "${{ github.event.inputs.hostname }}";
+            sshKeys = [
+        EOF
+
+        # Add SSH keys (handle multi-line input)
+        echo '${{ github.event.inputs.ssh_keys }}' | while IFS= read -r key; do
+          if [ -n "$key" ]; then
+            echo "      \"$key\"" >> servers.nix
+          fi
+        done
+
+        cat >> servers.nix << EOF
+            ];
+          };
+        }
+        EOF
+
+        echo "Generated servers.nix:"
+        cat servers.nix
+
+    - name: Build ISO
+      run: |
+        nix build ".#nixosConfigurations.${{ github.event.inputs.server_name }}-installer.config.system.build.isoImage"
+
+    - name: Upload ISO
+      uses: actions/upload-artifact@v3
+      with:
+        name: nixos-${{ github.event.inputs.server_name }}-installer
+        path: result/iso/*.iso
+        retention-days: 30
